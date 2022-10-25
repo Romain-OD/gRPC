@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+option csharp_namespace = "LibraryApi";
+
+package book;
+
+service BookCatalog {
+    rpc GetBookDetails (BookDetailsRequest) returns (BookDetailsReply);
+}
+
+message BookDetailsRequest {
+    int32 id = 1;
+}
+
+message BookDetailsReply {
+    int32 id = 1;
+    string name = 2;
+    repeated Author authors = 4;
+}
+
+message Author {
+    string firstname = 1;
+    string lastname = 2;
+}

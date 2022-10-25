@@ -1,0 +1,5 @@
+C:\Factory\gRPC\LibraryClientApp\obj\Debug\net6.0\LibraryClientApp.csproj.AssemblyReference.cache
+C:\Factory\gRPC\LibraryClientApp\obj\Debug\net6.0\LibraryClientApp.GeneratedMSBuildEditorConfig.editorconfig
+C:\Factory\gRPC\LibraryClientApp\obj\Debug\net6.0\LibraryClientApp.AssemblyInfoInputs.cache
+C:\Factory\gRPC\LibraryClientApp\obj\Debug\net6.0\LibraryClientApp.AssemblyInfo.cs
+C:\Factory\gRPC\LibraryClientApp\obj\Debug\net6.0\LibraryClientApp.csproj.CoreCompileInputs.cache
