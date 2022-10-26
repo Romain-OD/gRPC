@@ -7,15 +7,15 @@
 
 ## Protobuf et HTTP/2 au service de la perfomance
 
-Par défaut gRPC utilise **Protocol Buffers (Protobuf)** un système de sérialisation similaire JSON ou XML. Le système s'appuie sur des fichier **.proto** qui vont jouer le rôle d'interface et décrire notre objet. Le code source de l'objet pourra ensuite être générer  dans plusieurs langages.
+Par défaut, gRPC utilise **Protocol Buffers (Protobuf)** un système de sérialisation similaire JSON ou XML. Le système s'appuie sur des fichiers **.proto** qui vont jouer le rôle d'interface et décrire notre objet. Le code source de l'objet pourra ensuite être généré dans plusieurs langages.
 
 ![multi-langage-gRPC](multi-langage-gRPC.jpg)
 
-Les clients et les serveurs gRPC peuvent ainsi s'exécuter et communiquer entre eux à partir d'environnements différents. Par exemple, un serveur gRPC dans C# peut prendre en charge des clients en JavaScript,  Java, C# et tout autre.
+Les clients et les serveurs gRPC peuvent ainsi s'exécuter et communiquer entre eux à partir d'environnements différents. Par exemple, un serveur gRPC dans C# peut prendre en charge des clients en JavaScript, Java, C# et tout autre.
 
-De plus etant conçus pour **HTTP/2**, gRPC permet une communication plus  efficace en exploitant les fonctionnalités de streaming bidirectionnel et TLS (transport layer security).
+De plus, étant conçus pour **HTTP/2**, gRPC permet une communication plus efficace en exploitant les fonctionnalités de streaming bidirectionnel et TLS (transport layer security).
 
-Il est important de noté que gRPC n'est pas le seul a pouvoir utiliser HTTP/2 et profiter de ses améliorations de perfomance. Les API REST peuvent elles aussi se servir d'HTTP/2.
+Il est important de noter que gRPC n'est pas le seul à pouvoir utiliser HTTP/2 et profiter de ses améliorations de performance. Les API REST peuvent, elles aussi, se servir d'HTTP/2.
 
 ## Mise en pratique : exemple d'implementation
 
@@ -23,22 +23,22 @@ Le plus simple pour explorer son fonctionnement est de se lancer dans un projet 
 
 ### Creation du projet API
 
-Visual studio 2022 nous fournis un template pour la création d'un service gRPC. Nous allons donc séléctionner **ASP.NET core gRPC Service**, puis nous allons choisir le framework **.NET 6.0 LTS**.
+Visual studio 2022 nous fournit un template pour la création d'un service gRPC. Nous allons donc sélectionner **ASP.NET core gRPC Service**, puis nous allons choisir le framework **.NET 6.0 LTS**.
 
 Comme exemple parlant nous allons partir sur un API de gestion de librairie, que nous allons nommer *Library*.
 
 ![configure-project](configure-project.jpg)
 
 
-Vous retrouvez maintenant dans notre solution deux fichier généré par Visual Studio :
+Vous retrouvez maintenant dans notre solution deux fichiers généré par Visual Studio :
 - greet.proto : le contrat de notre API
 - GreeterService.cs : la classe de service de notre API
 
 #### 1. Création du contrat
 
-Nous allons commencer par définir notre contrat, afin de récuperer les information d'un livre de notre bibliothèque. En renommant le fichier **greet.proto** en **product.proto**.
+Nous allons commencer par définir notre contrat, afin de récupérer les informations d'un livre de notre bibliothèque. En renommant le fichier **greet.proto** en **product.proto**.
 
-Puis ensuite définir la fonction pour retourner un produit en passant en entrée son ID de la façon suivante en suivant la documentation suivante de  [proto3](https://developers.google.com/protocol-buffers/docs/proto3) :
+Puis définir la fonction pour retourner un produit en passant en entrée son ID de la façon suivante en suivant la documentation suivante de  [proto3](https://developers.google.com/protocol-buffers/docs/proto3) :
 
 ```protobuf
 syntax = "proto3";
@@ -58,7 +58,7 @@ message BookDetailsRequest {
 message BookDetailsReply {
     int32 id = 1;
     string name = 2;
-    Author author = 4;
+    repeated Author author = 4;
 }
 
 message Author {
@@ -72,7 +72,7 @@ message Author {
 
 De la même façon nous allons renommer **GreeterService.cs** en **BookService.cs**.
 
-Ensuite nous réécrivons en dur notre service pour retourner le detail d'un libre en suivant les spécification du contrat présent dans le fichier **book.proto**, par exemple comme ci-dessous :
+Ensuite, nous réécrivons en dur notre service pour retourner le détail d'un livre en suivant les spécifications du contrat présent dans le fichier **book.proto**, par exemple comme ci-dessous :
 
 ```c#
 public override Task<BookDetailsReply> GetBookDetails(
@@ -100,7 +100,7 @@ public override Task<BookDetailsReply> GetBookDetails(
     }
 ```
 
-Pour que le service fonctionne, il necessaire de modifier le Program.cs pour référencer le nouveau nom du service. Dans notre cas, nous allons renommer ```app.MapGrpcService<GreeterService>(); ``` en ```app.MapGrpcService<BookService>();``` pour rendre notre nouvelle API exécutable.
+Pour que le service fonctionne, il nécessaire de modifier le Program.cs pour référencer le nouveau nom du service. Dans notre cas, nous allons renommer ```app.MapGrpcService<GreeterService>(); ``` en ```app.MapGrpcService<BookService>();``` pour rendre notre nouvelle API exécutable.
 
 
 Maintenant nous pouvons lancer notre projet nous avons bien une API qui tourne. Néamoins si nous essayons d'y accéder depuis un navigateur nous obtenons le message suivant : 
@@ -108,11 +108,11 @@ Maintenant nous pouvons lancer notre projet nous avons bien une API qui tourne. 
 ![client-needed](client-needed.jpg)
 
 
-En effet nous avons besoin un client gRPC pour pouvoir etablir la comunication avec ce nouveaux EndPoint.
+En effet, nous avons besoin d'un client gRPC pour pouvoir établir la communication avec ce nouveau EndPoint.
 
 ### Création du client
 
-Pour la création du client nous pouvais partir sur votre langage préférer comme annoncé dans ma présentation. Ici nous allons partir un Console App basique en C# pour appeler notre API, que nous allons appeler LibraryClientApp.
+Pour la création du client vous pouvez partir sur votre langage préféré tel qu'annoncé dans ma présentation. Ici, nous allons partir sur une Console App basique en C# pour appeler notre API, que nous allons appeler LibraryClientApp.
 
 #### 1. Ajout des NuGet
 Pour pouvoir fonctionner notre client a besoin des NuGet packages suivant :
@@ -121,16 +121,16 @@ Pour pouvoir fonctionner notre client a besoin des NuGet packages suivant :
 - Grpc.Tools, la boite à outils C# pour les fichiers protobuf
 
 #### 2. Ajout du contrat
-Pour rappel le fonctionnement de gRPC est basé sur la partage de contrat.
+Pour rappel, le fonctionnement de gRPC est basé sur le partage de contrat.
 
-Nous allons donc crée un dossier nommé Protos dans lequel nous y copier le book.proto depuis notre service.
+Nous allons donc crée un dossier nommé Protos dans lequel nous y copier le **book.proto** depuis notre service.
 
 Puis mettre à jour le namespace du **.proto** avec le namespace de notre projet.
  ```csharp
  option csharp_namespace = "LibraryClientApp";
  ```
 
-Pour que le **.proto** soit bien pris en compte par notre application. Nous devons rajouter un item group dans le **.csproj** comme suit : 
+Pour que le **.proto** soit bien pris en compte par notre application. Nous devons rajouter un *item group* dans le **.csproj** comme suit : 
 
 ```xml
   <ItemGroup>
@@ -140,10 +140,10 @@ Pour que le **.proto** soit bien pris en compte par notre application. Nous devo
 
 ### 2. Consommation de l'API
 
-Maintenant que notre contrat est bien enregistrer dans notre client. Il nous reste à modifier notre **program.cs** pour accomplir les actions necessaire à la consommation de notre API: 
-- Créez le chanel qui représente l'emplacement du point de terminaison de service (le port peut varier, consultez donc le fichier launchsettings.json pour la valeur réelle).
+Maintenant que notre contrat est bien enregistré dans notre client. Il nous reste à modifier notre **program.cs** pour accomplir les actions nécessaire à la consommation de notre API: 
+- Créez le chanel qui représente l'emplacement du point de terminaison de service (le port peut varier, consultez donc le fichier launchsettings.json, pour la valeur réelle).
 - Créer l'objet client.
-- Construiser une requête simple.
+- Construire une requête simple.
 - Envoyer la demande.
 
 ```csharp
@@ -171,7 +171,7 @@ Console.ReadKey();
 
 Nous pouvons donc maintenant lancer nos deux projets.
 
-En sorti de notre client nous obtenons bien les information de notre livre : 
+En sorti de notre client nous obtenons bien les informations de notre livre : 
 
 ```console
 {
@@ -199,14 +199,9 @@ En sorti de notre client nous obtenons bien les information de notre livre :
 ```
 
 ## Conclusion
--- TODO
 
-gRPC convient parfaitement aux scénarios suivants :
+Comme nous avons pu le voir, au travers de notre exemple, gRPC offre une prise en main relativement aisé.
 
-Microservices : gRPC est conçu pour une faible latence et une communication à débit élevé. gRPC est idéal pour les microservices légers où l’efficacité est essentielle.
-Communication en temps réel point à point : gRPC offre une excellente prise en charge du streaming bidirectionnel. Les services gRPC peuvent envoyer des messages en temps réel sans interrogation.
-Environnements polyglottes : les outils gRPC prennent en charge tous les langages de développement populaires, ce qui fait de gRPC un bon choix pour les environnements multilingues.
-Environnements contraintes réseau : les messages gRPC sont sérialisés avec Protobuf, un format de message léger. Un message gRPC est toujours plus petit qu’un message ON équivalent JS.
-Communication interprocessus (IPC) : les transports IPC tels que les sockets de domaine Unix et les canaux nommés peuvent être utilisés avec gRPC pour communiquer entre les applications sur le même ordinateur. Pour plus d’informations, consultez Communication interprocessus avec gRPC.
+gRPC peut convenir parfaitement à un scénario comme un micro-service où l'efficacité est essentielle, car il est conçu pour une faible latence et une communication à débit élevé.
 
- Cependant, lorsque les deux options conviennent, je vous encourage à essayer gRPC, cela vous donnera une longueur d'avance sur l'avenir des API.
+Le dilemme peut poser avec REST, certain point vous amèneront  à choisir l'un ou l'autre. Cependant, dans les deux options conviennent dans beaucoup de cas, au-quels cas je vous encourage à essayer gRPC, cela vous donnera une longueur d'avance sur l'avenir des API.
